@@ -4,6 +4,8 @@ import Toast from '../../components/Toast'
 import Pager from '../../components/Pager'
 
 const PAGE = 10
+const norm = (s) => s.trim().toLowerCase()
+const byNat = (a, b) => a.nom.localeCompare(b.nom, 'fr', { numeric: true })
 
 export default function Structure() {
   const [districts, setDistricts] = useState([])
@@ -25,7 +27,7 @@ export default function Structure() {
       supabase.from('districts').select('*').order('nom'),
       supabase.from('eglises').select('*').order('nom')
     ])
-    setDistricts(d || []); setEglises(e || [])
+    setDistricts((d || []).sort(byNat)); setEglises((e || []).sort(byNat))
     if ((d || []).length && !ed) setEd(d[0].id)
   }, [ed])
   useEffect(() => { load() }, [load])
@@ -45,13 +47,16 @@ export default function Structure() {
   const eglisesP = eglisesF.slice((curE - 1) * PAGE, curE * PAGE)
 
   async function addDistrict() {
-    if (!nd.trim()) return
-    const { error } = await supabase.from('districts').insert({ nom: nd.trim() })
+    const v = nd.trim(); if (!v) return
+    if (districts.some(d => norm(d.nom) === norm(v))) return setToast('Ce district existe déjà.')
+    const { error } = await supabase.from('districts').insert({ nom: v })
     if (error) return setToast('Erreur: ' + error.message)
     setNd(''); setToast('District ajouté'); load()
   }
   async function saveDistrict() {
     const v = editD.val.trim(); if (!v) return setEditD(null)
+    if (districts.some(d => d.id !== editD.id && norm(d.nom) === norm(v)))
+      return setToast('Un district porte déjà ce nom.')
     const { error } = await supabase.from('districts').update({ nom: v }).eq('id', editD.id)
     if (error) return setToast('Erreur: ' + error.message)
     setEditD(null); load()
@@ -63,13 +68,17 @@ export default function Structure() {
 
   async function addEglise() {
     if (!ed) return setToast("Créez d'abord un district")
-    if (!ne.trim()) return
-    const { error } = await supabase.from('eglises').insert({ nom: ne.trim(), district_id: ed })
+    const v = ne.trim(); if (!v) return
+    if (eglises.some(e => e.district_id === ed && norm(e.nom) === norm(v)))
+      return setToast('Cette église existe déjà dans ce district.')
+    const { error } = await supabase.from('eglises').insert({ nom: v, district_id: ed })
     if (error) return setToast('Erreur: ' + error.message)
     setNe(''); setToast('Église ajoutée'); load()
   }
   async function saveEglise() {
     const v = editE.val.trim(); if (!v) return setEditE(null)
+    if (eglises.some(e => e.id !== editE.id && e.district_id === editE.district_id && norm(e.nom) === norm(v)))
+      return setToast('Une église porte déjà ce nom dans ce district.')
     const { error } = await supabase.from('eglises')
       .update({ nom: v, district_id: editE.district_id }).eq('id', editE.id)
     if (error) return setToast('Erreur: ' + error.message)
@@ -84,7 +93,7 @@ export default function Structure() {
     <>
       <h1 className="page-h">Structure</h1>
 
-      <div className="struct-grid">
+      <div className="cols-2">
         {/* ---------- DISTRICTS ---------- */}
         <div className="card">
           <h2>Districts <span className="count-badge">{districts.length}</span></h2>

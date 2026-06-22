@@ -92,6 +92,7 @@ export default function Utilisateurs() {
     <>
       <h1 className="page-h">Comptes utilisateurs</h1>
 
+      <div className="cols-2">
       <div className="card">
         <h2 style={{ marginTop: 0 }}>Créer un compte</h2>
         <p className="hint" style={{ marginTop: 0, marginBottom: 14 }}>
@@ -169,6 +170,7 @@ export default function Utilisateurs() {
           </table>
         </div>
         <Pager page={curU} pages={pagesU} total={profilesF.length} label="compte(s)" onPage={setPageU} />
+      </div>
       </div>
       <Toast msg={toast} onDone={() => setToast('')} />
     </>
