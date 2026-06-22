@@ -3,7 +3,7 @@ import { supabase } from '../../lib/supabase'
 import { CAT_CLASS, memberLine, fmt, nf } from '../../lib/constants'
 import Pager from '../../components/Pager'
 
-const PAGE = 15
+const PAGE = 8
 
 export default function Membres() {
   const [districts, setDistricts] = useState([])

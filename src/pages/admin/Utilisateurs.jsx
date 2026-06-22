@@ -3,7 +3,7 @@ import { supabase, createSignupClient } from '../../lib/supabase'
 import Toast from '../../components/Toast'
 import Pager from '../../components/Pager'
 
-const PAGE = 10
+const PAGE = 8
 
 export default function Utilisateurs() {
   const [profiles, setProfiles] = useState([])
