@@ -69,16 +69,17 @@ export default function Structure() {
   async function addEglise() {
     if (!ed) return setToast("Créez d'abord un district")
     const v = ne.trim(); if (!v) return
-    if (eglises.some(e => e.district_id === ed && norm(e.nom) === norm(v)))
-      return setToast('Cette église existe déjà dans ce district.')
+    // Une église ne peut exister que dans UN district : nom unique partout.
+    const dup = eglises.find(e => norm(e.nom) === norm(v))
+    if (dup) return setToast(`« ${v} » existe déjà dans le district ${dname(dup.district_id)}.`)
     const { error } = await supabase.from('eglises').insert({ nom: v, district_id: ed })
     if (error) return setToast('Erreur: ' + error.message)
     setNe(''); setToast('Église ajoutée'); load()
   }
   async function saveEglise() {
     const v = editE.val.trim(); if (!v) return setEditE(null)
-    if (eglises.some(e => e.id !== editE.id && e.district_id === editE.district_id && norm(e.nom) === norm(v)))
-      return setToast('Une église porte déjà ce nom dans ce district.')
+    const dup = eglises.find(e => e.id !== editE.id && norm(e.nom) === norm(v))
+    if (dup) return setToast(`« ${v} » existe déjà dans le district ${dname(dup.district_id)}.`)
     const { error } = await supabase.from('eglises')
       .update({ nom: v, district_id: editE.district_id }).eq('id', editE.id)
     if (error) return setToast('Erreur: ' + error.message)

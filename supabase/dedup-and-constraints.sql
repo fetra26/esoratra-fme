@@ -12,11 +12,11 @@ where a.id <> b.id
   and lower(btrim(a.nom)) = lower(btrim(b.nom))
   and a.created_at > b.created_at;
 
--- (1b) Idem pour les églises, doublon = même nom DANS le même district.
+-- (1b) Idem pour les églises : une église n'appartient qu'à UN district,
+--      donc doublon = même nom n'importe où (on garde le plus ancien).
 delete from eglises a
 using eglises b
 where a.id <> b.id
-  and a.district_id = b.district_id
   and lower(btrim(a.nom)) = lower(btrim(b.nom))
   and a.created_at > b.created_at;
 
@@ -24,6 +24,8 @@ where a.id <> b.id
 create unique index if not exists districts_nom_uniq
   on districts (lower(btrim(nom)));
 
--- (2b) Unicité du nom d'église à l'intérieur d'un district.
+-- (2b) Unicité GLOBALE du nom d'église (une église = un seul district).
+--      (on retire l'éventuel ancien index par district.)
+drop index if exists eglises_nom_uniq;
 create unique index if not exists eglises_nom_uniq
-  on eglises (district_id, lower(btrim(nom)));
+  on eglises (lower(btrim(nom)));
