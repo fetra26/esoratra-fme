@@ -171,6 +171,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);b
 .tbl tbody tr:hover{background:#f6f9f7}
 .tbl th.num,.tbl td.num{text-align:center;width:84px;color:var(--muted)}
 .tbl th.act,.tbl td.act{text-align:right;white-space:nowrap;width:96px}
+.tbl th.money,.tbl td.money{text-align:right;white-space:nowrap}
+.tbl td.money{color:var(--green-dark);font-weight:600}
 .tbl td .muted{color:var(--muted)}
 .tbl-empty{text-align:center;color:var(--muted);padding:18px 12px}
 .tbl-inp{padding:7px 9px;font-size:14px;border-radius:7px}

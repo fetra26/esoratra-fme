@@ -1,11 +1,16 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase, createSignupClient } from '../../lib/supabase'
 import Toast from '../../components/Toast'
+import Pager from '../../components/Pager'
+
+const PAGE = 10
 
 export default function Utilisateurs() {
   const [profiles, setProfiles] = useState([])
   const [districts, setDistricts] = useState([])
   const [toast, setToast] = useState('')
+  const [qu, setQu] = useState('')      // recherche email
+  const [pageU, setPageU] = useState(1)
 
   // Formulaire « créer un compte »
   const [email, setEmail] = useState('')
@@ -78,6 +83,11 @@ export default function Utilisateurs() {
 
   const dname = (id) => districts.find(d => d.id === id)?.nom || ''
 
+  const profilesF = profiles.filter(p => (p.email || '').toLowerCase().includes(qu.trim().toLowerCase()))
+  const pagesU = Math.max(1, Math.ceil(profilesF.length / PAGE))
+  const curU = Math.min(pageU, pagesU)
+  const profilesP = profilesF.slice((curU - 1) * PAGE, curU * PAGE)
+
   return (
     <>
       <h1 className="page-h">Comptes utilisateurs</h1>
@@ -118,38 +128,51 @@ export default function Utilisateurs() {
       </div>
 
       <div className="card">
-        <h2 style={{ marginTop: 0 }}>Comptes existants</h2>
+        <h2 style={{ marginTop: 0 }}>Comptes existants <span className="count-badge">{profiles.length}</span></h2>
         <p className="hint" style={{ marginTop: 0, marginBottom: 14 }}>
           Attribuez un rôle à chaque compte. Un responsable doit aussi recevoir son district :
           il ne verra alors que les églises et membres de ce district.
         </p>
-        {profiles.length ? profiles.map(p => (
-          <div className="item" key={p.id} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 10 }}>
-            <div><div className="nm">{p.email}</div>
-              <div className="sb">Statut : {labelRole(p.role)}{p.role === 'responsable' && p.district_id ? ' · ' + dname(p.district_id) : ''}</div>
-            </div>
-            <div className="row" style={{ gap: 8 }}>
-              <select value={p.role} onChange={e => setRole(p.id, e.target.value)}>
-                <option value="en_attente">En attente</option>
-                <option value="responsable">Responsable district</option>
-                <option value="admin">Admin fédération</option>
-              </select>
-              {p.role === 'responsable' && (
-                <select value={p.district_id || ''} onChange={e => setDistrict(p.id, e.target.value)}>
-                  <option value="">— district —</option>
-                  {districts.map(d => <option key={d.id} value={d.id}>{d.nom}</option>)}
-                </select>
-              )}
-            </div>
-          </div>
-        )) : <div className="empty">Aucun compte.</div>}
+        {profiles.length > PAGE && (
+          <input className="tbl-search" value={qu}
+            onChange={e => { setQu(e.target.value); setPageU(1) }}
+            placeholder="🔎 Rechercher un email…" />
+        )}
+        <div className="tbl-wrap">
+          <table className="tbl">
+            <thead><tr><th>Email</th><th>Rôle</th><th>District</th></tr></thead>
+            <tbody>
+              {profilesP.map(p => (
+                <tr key={p.id}>
+                  <td>{p.email}</td>
+                  <td>
+                    <select value={p.role} onChange={e => setRole(p.id, e.target.value)}>
+                      <option value="en_attente">En attente</option>
+                      <option value="responsable">Responsable district</option>
+                      <option value="admin">Admin fédération</option>
+                    </select>
+                  </td>
+                  <td>
+                    {p.role === 'responsable'
+                      ? (
+                        <select value={p.district_id || ''} onChange={e => setDistrict(p.id, e.target.value)}>
+                          <option value="">— district —</option>
+                          {districts.map(d => <option key={d.id} value={d.id}>{d.nom}</option>)}
+                        </select>
+                      )
+                      : <span className="muted">—</span>}
+                  </td>
+                </tr>
+              ))}
+              {!profilesF.length && <tr><td colSpan={3} className="tbl-empty">Aucun compte.</td></tr>}
+            </tbody>
+          </table>
+        </div>
+        <Pager page={curU} pages={pagesU} total={profilesF.length} label="compte(s)" onPage={setPageU} />
       </div>
       <Toast msg={toast} onDone={() => setToast('')} />
     </>
   )
-}
-function labelRole(r) {
-  return { admin: 'Admin fédération', responsable: 'Responsable', en_attente: 'En attente' }[r] || r
 }
 function traduire(m) {
   if (/already registered/i.test(m)) return 'Cet email a déjà un compte.'
