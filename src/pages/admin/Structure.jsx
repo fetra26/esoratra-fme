@@ -173,7 +173,7 @@ export default function Structure() {
               <input value={qe} onChange={e => { setQe(e.target.value); setPageE(1) }} placeholder="🔎 Église…" />
             </div>
           </div>
-          <div className="tbl-wrap">
+          <div className="tbl-wrap scroll-y">
             <table className="tbl">
               <thead><tr><th>Église</th><th>District</th><th className="act"></th></tr></thead>
               <tbody>

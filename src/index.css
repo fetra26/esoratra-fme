@@ -164,6 +164,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);b
   color:var(--green-dark);background:var(--green-soft);border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:middle}
 .tbl-search{margin-top:12px}
 .tbl-wrap{margin-top:12px;overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.tbl-wrap.scroll-y{max-height:360px;overflow-y:auto}
+.tbl-wrap.scroll-y thead th{position:sticky;top:0;z-index:1}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}
 .tbl th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);
   font-weight:700;padding:10px 12px;background:#f6f9f7;border-bottom:1px solid var(--line);white-space:nowrap}
