@@ -186,3 +186,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);b
 .ic.del{color:var(--danger)}
 .ic.del:hover{background:var(--accent-soft)}
 .ic.ok{color:var(--green)}
+.row-off{opacity:.55}
+.tag-off{display:inline-block;margin-left:8px;font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--danger);background:var(--accent-soft);padding:1px 7px;border-radius:999px;vertical-align:middle}
+.tag-me{display:inline-block;margin-left:8px;font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--blue);background:var(--blue-soft);padding:1px 7px;border-radius:999px;vertical-align:middle}

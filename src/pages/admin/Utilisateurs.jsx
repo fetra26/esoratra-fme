@@ -1,11 +1,14 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase, createSignupClient } from '../../lib/supabase'
+import { useAuth } from '../../context/AuthContext'
 import Toast from '../../components/Toast'
 import Pager from '../../components/Pager'
 
 const PAGE = 8
 
 export default function Utilisateurs() {
+  const { session } = useAuth()
+  const myId = session?.user?.id
   const [profiles, setProfiles] = useState([])
   const [districts, setDistricts] = useState([])
   const [toast, setToast] = useState('')
@@ -81,6 +84,33 @@ export default function Utilisateurs() {
     } finally { setBusy(false) }
   }
 
+  // Appel sécurisé à l'Edge Function (le jeton de l'admin est transmis automatiquement)
+  async function callAdmin(action, userId, extra = {}) {
+    const { error } = await supabase.functions.invoke('admin-users', { body: { action, userId, ...extra } })
+    if (error) {
+      let msg = error.message
+      try { const j = await error.context.json(); if (j?.error) msg = j.error } catch { /* ignore */ }
+      setToast('Erreur: ' + msg); return false
+    }
+    return true
+  }
+  async function toggleDisabled(p) {
+    const ok = await callAdmin(p.disabled ? 'enable' : 'disable', p.id)
+    if (ok) { setToast(p.disabled ? 'Compte réactivé' : 'Compte désactivé'); load() }
+  }
+  async function removeAccount(p) {
+    if (!confirm(`Supprimer DÉFINITIVEMENT le compte ${p.email} ? Action irréversible.`)) return
+    const ok = await callAdmin('delete', p.id)
+    if (ok) { setToast('Compte supprimé'); load() }
+  }
+  async function changePassword(p) {
+    const np = prompt(`Nouveau mot de passe pour ${p.email} (min. 6 caractères) :`)
+    if (np == null) return
+    if (np.trim().length < 6) return setToast('Mot de passe trop court (min. 6).')
+    const ok = await callAdmin('set-password', p.id, { password: np.trim() })
+    if (ok) setToast('Mot de passe mis à jour')
+  }
+
   const dname = (id) => districts.find(d => d.id === id)?.nom || ''
 
   const profilesF = profiles.filter(p => (p.email || '').toLowerCase().includes(qu.trim().toLowerCase()))
@@ -141,11 +171,11 @@ export default function Utilisateurs() {
         )}
         <div className="tbl-wrap">
           <table className="tbl">
-            <thead><tr><th>Email</th><th>Rôle</th><th>District</th></tr></thead>
+            <thead><tr><th>Email</th><th>Rôle</th><th>District</th><th className="act">Actions</th></tr></thead>
             <tbody>
               {profilesP.map(p => (
-                <tr key={p.id}>
-                  <td>{p.email}</td>
+                <tr key={p.id} className={p.disabled ? 'row-off' : ''}>
+                  <td>{p.email}{p.disabled && <span className="tag-off">désactivé</span>}{p.id === myId && <span className="tag-me">vous</span>}</td>
                   <td>
                     <select value={p.role} onChange={e => setRole(p.id, e.target.value)}>
                       <option value="en_attente">En attente</option>
@@ -163,9 +193,18 @@ export default function Utilisateurs() {
                       )
                       : <span className="muted">—</span>}
                   </td>
+                  <td className="act">
+                    {p.id === myId ? <span className="muted">—</span> : (
+                      <>
+                        <button className="ic" title="Définir le mot de passe" onClick={() => changePassword(p)}>🔑</button>
+                        <button className="ic" title={p.disabled ? 'Réactiver' : 'Désactiver'} onClick={() => toggleDisabled(p)}>{p.disabled ? '↩' : '🚫'}</button>
+                        <button className="ic del" title="Supprimer" onClick={() => removeAccount(p)}>🗑</button>
+                      </>
+                    )}
+                  </td>
                 </tr>
               ))}
-              {!profilesF.length && <tr><td colSpan={3} className="tbl-empty">Aucun compte.</td></tr>}
+              {!profilesF.length && <tr><td colSpan={4} className="tbl-empty">Aucun compte.</td></tr>}
             </tbody>
           </table>
         </div>

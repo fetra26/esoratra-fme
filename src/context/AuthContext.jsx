@@ -53,6 +53,7 @@ export function AuthProvider({ children }) {
     session, profile, loading, authError,
     role: profile?.role,
     districtId: profile?.district_id,
+    disabled: !!profile?.disabled,
     refreshProfile: () => loadProfile(session?.user?.id),
     signIn: (email, password) => supabase.auth.signInWithPassword({ email, password }),
     signOut: () => supabase.auth.signOut()

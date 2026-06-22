@@ -34,7 +34,7 @@ function AuthErrorScreen({ message, onRetry, onSignOut }) {
 }
 
 export default function App() {
-  const { loading, session, role, authError, refreshProfile, signOut } = useAuth()
+  const { loading, session, role, authError, disabled, refreshProfile, signOut } = useAuth()
   if (loading) return <Splash />
   if (!session) return (
     <Routes>
@@ -45,6 +45,18 @@ export default function App() {
   // Session valide mais profil non chargé à cause d'une erreur (réseau/serveur) :
   // ne pas confondre avec « en attente ».
   if (authError) return <AuthErrorScreen message={authError} onRetry={refreshProfile} onSignOut={signOut} />
+  if (disabled) return (
+    <div className="auth-wrap">
+      <div className="auth-card" style={{ textAlign: 'center' }}>
+        <div className="auth-logo">🚫</div>
+        <h1>Compte désactivé</h1>
+        <p style={{ fontSize: 14, color: 'var(--muted)', margin: '8px 0 20px' }}>
+          Votre compte a été désactivé par un administrateur. Contactez le secrétariat de la Camporée.
+        </p>
+        <button className="btn btn-ghost" onClick={signOut}>Se déconnecter</button>
+      </div>
+    </div>
+  )
   if (role === 'en_attente' || !role) return <Pending />
 
   return (
