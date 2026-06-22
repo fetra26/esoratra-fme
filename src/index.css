@@ -151,3 +151,33 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);b
 .auth-switch{text-align:center;font-size:13px;color:var(--muted);margin-top:16px}
 .auth-switch button{background:none;border:none;color:var(--green);font-weight:700;cursor:pointer;font-family:inherit;font-size:13px}
 @media (max-width:380px){.row{flex-direction:column;gap:0}}
+
+/* ---------- Tables CRUD (Structure) ---------- */
+.struct-grid{display:grid;gap:16px;grid-template-columns:1fr;align-items:start}
+@media(min-width:900px){.struct-grid{grid-template-columns:1fr 1fr}}
+.struct-grid .card{margin-bottom:0}
+.pager{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;flex-wrap:wrap}
+.pager-info{font-size:12px;color:var(--muted)}
+.pager-btns{display:flex;gap:6px}
+.count-badge{display:inline-block;min-width:22px;text-align:center;font-size:12px;font-weight:700;
+  color:var(--green-dark);background:var(--green-soft);border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:middle}
+.tbl-search{margin-top:12px}
+.tbl-wrap{margin-top:12px;overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);
+  font-weight:700;padding:10px 12px;background:#f6f9f7;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--line);color:var(--ink);vertical-align:middle}
+.tbl tbody tr:last-child td{border-bottom:0}
+.tbl tbody tr:hover{background:#f6f9f7}
+.tbl th.num,.tbl td.num{text-align:center;width:84px;color:var(--muted)}
+.tbl th.act,.tbl td.act{text-align:right;white-space:nowrap;width:96px}
+.tbl td .muted{color:var(--muted)}
+.tbl-empty{text-align:center;color:var(--muted);padding:18px 12px}
+.tbl-inp{padding:7px 9px;font-size:14px;border-radius:7px}
+.tbl td select{padding:7px 9px;font-size:14px;border-radius:7px}
+.ic{width:auto;border:0;background:transparent;cursor:pointer;font-size:15px;line-height:1;
+  padding:5px 7px;border-radius:7px;color:#4a5a53;transition:background .12s}
+.ic:hover{background:var(--green-soft)}
+.ic.del{color:var(--danger)}
+.ic.del:hover{background:var(--accent-soft)}
+.ic.ok{color:var(--green)}
