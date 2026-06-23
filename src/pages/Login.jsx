@@ -16,6 +16,7 @@ export default function Login() {
     try {
       const { error } = await signIn(email.trim(), pw)
       if (error) setErr(traduire(error.message))
+      else playWelcome()  // son de bienvenue à l'entrée (le clic autorise la lecture)
     } finally { setBusy(false) }
   }
 
@@ -62,6 +63,14 @@ export default function Login() {
       </div>
     </div>
   )
+}
+
+function playWelcome() {
+  try {
+    const a = new Audio('/audio.mp3')
+    a.volume = 1
+    a.play().catch(() => { /* lecture bloquée par le navigateur : sans gravité */ })
+  } catch { /* ignore */ }
 }
 
 function traduire(m) {
