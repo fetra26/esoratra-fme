@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase, createSignupClient } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
+import { DISTRICTS, emailForDistrict, passwordForDistrict } from '../../lib/districts'
 import Toast from '../../components/Toast'
 import Pager from '../../components/Pager'
 
@@ -22,6 +23,10 @@ export default function Utilisateurs() {
   const [newDistrict, setNewDistrict] = useState('')
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
+
+  // Initialisation en masse (districts + comptes responsables)
+  const [bulkBusy, setBulkBusy] = useState(false)
+  const [bulkRows, setBulkRows] = useState([])
 
   const load = useCallback(async () => {
     const [{ data: p }, { data: d }] = await Promise.all([
@@ -111,6 +116,64 @@ export default function Utilisateurs() {
     if (ok) setToast('Mot de passe mis à jour')
   }
 
+  // Crée les districts manquants puis un compte responsable par district.
+  async function bulkSetup() {
+    if (!confirm(`Créer les ${DISTRICTS.length} districts manquants et un compte responsable pour chacun ?`)) return
+    setBulkBusy(true)
+    const results = []
+    const same = (a, b) => a.trim().toLowerCase() === b.trim().toLowerCase()
+
+    // 1) Districts manquants
+    let { data: dists } = await supabase.from('districts').select('*')
+    dists = dists || []
+    for (const name of DISTRICTS) {
+      if (!dists.some(d => same(d.nom, name))) {
+        const { data } = await supabase.from('districts').insert({ nom: name }).select().single()
+        if (data) dists.push(data)
+      }
+    }
+
+    // 2) Comptes responsables
+    const { data: profs } = await supabase.from('profiles').select('email')
+    const taken = new Set((profs || []).map(p => (p.email || '').toLowerCase()))
+
+    for (const name of DISTRICTS) {
+      const d = dists.find(x => same(x.nom, name))
+      const email = emailForDistrict(name)
+      const password = passwordForDistrict(name)
+      if (!d) { results.push({ name, email, password, status: '❌ district manquant' }) }
+      else if (taken.has(email.toLowerCase())) { results.push({ name, email, password, status: 'déjà créé' }) }
+      else {
+        try {
+          const tmp = createSignupClient()
+          const { data, error } = await tmp.auth.signUp({ email, password })
+          if (error) results.push({ name, email, password, status: '❌ ' + traduire(error.message) })
+          else if (!data.session) results.push({ name, email, password, status: '⚠ confirmation email active' })
+          else {
+            let ok = false
+            for (let i = 0; i < 5 && !ok; i++) {
+              const { data: rows } = await supabase.from('profiles')
+                .update({ role: 'responsable', district_id: d.id }).eq('id', data.user.id).select('id')
+              if (rows && rows.length) ok = true; else await new Promise(r => setTimeout(r, 400))
+            }
+            taken.add(email.toLowerCase())
+            results.push({ name, email, password, status: ok ? '✅ créé' : '✅ créé (rôle à régler)' })
+          }
+        } catch (e) {
+          results.push({ name, email, password, status: '❌ ' + (e?.message || e) })
+        }
+        await new Promise(r => setTimeout(r, 250)) // léger délai anti rate-limit
+      }
+      setBulkRows([...results])
+    }
+    setBulkBusy(false); load()
+  }
+  function copyCreds() {
+    const txt = bulkRows.map(r => `${r.name}\t${r.email}\t${r.password}\t${r.status}`).join('\n')
+    navigator.clipboard.writeText('District\tEmail\tMot de passe\tStatut\n' + txt)
+      .then(() => setToast('Liste copiée dans le presse-papiers'))
+  }
+
   const dname = (id) => districts.find(d => d.id === id)?.nom || ''
 
   const profilesF = profiles.filter(p => (p.email || '').toLowerCase().includes(qu.trim().toLowerCase()))
@@ -121,6 +184,40 @@ export default function Utilisateurs() {
   return (
     <>
       <h1 className="page-h">Comptes utilisateurs</h1>
+
+      <div className="card">
+        <h2 style={{ marginTop: 0 }}>Initialisation — districts & responsables</h2>
+        <p className="hint" style={{ marginTop: 0, marginBottom: 14 }}>
+          Crée les <b>{DISTRICTS.length} districts</b> et un <b>compte responsable</b> par district
+          (email <code>nomdistrict.resp@esoratra.mg</code>, mot de passe <code>nomdistrictFME2026</code>).
+          Les éléments déjà existants sont ignorés. Nécessite « Confirm email » désactivé dans Supabase.
+        </p>
+        <div className="btn-row">
+          <button className="btn btn-primary btn-sm" onClick={bulkSetup} disabled={bulkBusy}>
+            {bulkBusy ? 'Création en cours…' : '⚙️ Créer districts + comptes responsables'}
+          </button>
+          {bulkRows.length > 0 && (
+            <button className="btn btn-green btn-sm" onClick={copyCreds} disabled={bulkBusy}>📋 Copier la liste</button>
+          )}
+        </div>
+        {bulkRows.length > 0 && (
+          <div className="tbl-wrap scroll-y" style={{ marginTop: 12 }}>
+            <table className="tbl">
+              <thead><tr><th>District</th><th>Email</th><th>Mot de passe</th><th>Statut</th></tr></thead>
+              <tbody>
+                {bulkRows.map(r => (
+                  <tr key={r.email}>
+                    <td>{r.name}</td>
+                    <td>{r.email}</td>
+                    <td><code>{r.password}</code></td>
+                    <td>{r.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
       <div className="cols-2">
       <div className="card">
