@@ -31,8 +31,8 @@ export default function ExportPage() {
       <h1 className="page-h">Export Excel</h1>
       <div className="card">
         <p className="hint" style={{ marginTop: 0, marginBottom: 14 }}>
-          Génère un classeur Excel (.xls) avec une feuille séparée par église ou par district.
-          S'ouvre dans Excel ou LibreOffice.
+          Génère un vrai classeur Excel <b>.xlsx</b> avec une feuille séparée par église ou par district.
+          S'ouvre dans Excel, LibreOffice ou Google Sheets.
         </p>
         <button className="btn btn-green" disabled={busy} onClick={() => run('eglise')}>⬇ Une feuille par église</button>
         <button className="btn btn-green" style={{ marginTop: 10 }} disabled={busy} onClick={() => run('district')}>⬇ Une feuille par district</button>

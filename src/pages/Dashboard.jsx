@@ -71,9 +71,9 @@ export default function Dashboard() {
 
         <div className="card">
           <h2 style={{ marginTop: 0 }}>Encadrement</h2>
-          <div className={'ratio ' + (encOk ? 'ok' : 'ko')}>
-            <div className="ratio-n">{nbEnc} / {besoinEnc}</div>
-            <div className="ratio-l">Encadreurs présents / requis</div>
+          <div className={'dash-ratio ' + (encOk ? 'ok' : 'ko')}>
+            <div className="dash-ratio-n">{nbEnc} / {besoinEnc}</div>
+            <div className="dash-ratio-l">Encadreurs présents / requis</div>
           </div>
           <p className="hint" style={{ marginBottom: 0 }}>
             Règle : 1 encadreur pour 4 Mpisavalalana et 1 pour 2 Mpisantatra.

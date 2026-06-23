@@ -20,7 +20,7 @@ export async function printBadges(membres, { egById = {}, distByEglise = {} } = 
   const logo = await toDataUrl(location.origin + '/image.png')
 
   const cards = membres.map(m => `<div class="badge">
-    <div class="b-top" style="background-image:linear-gradient(180deg,rgba(8,40,32,.15),rgba(8,40,32,.92)),url('${logo}')">
+    <div class="b-top">
       <div class="b-brand"><span class="b-mark">⛺</span> eSoratra FME</div>
       <div class="b-cat">${esc(m.categorie)}</div>
     </div>
@@ -42,7 +42,8 @@ export async function printBadges(membres, { egById = {}, distByEglise = {} } = 
     .sheet{display:grid;grid-template-columns:repeat(2,1fr);gap:6mm;justify-items:center}
     .badge{width:92mm;height:86mm;border-radius:4mm;overflow:hidden;background:#fff;
       box-shadow:0 0 0 .3mm #0a5e4d;display:flex;flex-direction:column;page-break-inside:avoid}
-    .b-top{height:34mm;background-size:cover;background-position:center;
+    .b-top{height:34mm;background-image:linear-gradient(180deg,rgba(8,40,32,.15),rgba(8,40,32,.92)),url('${logo}');
+      background-size:cover;background-position:center;
       color:#fff;display:flex;flex-direction:column;justify-content:space-between;padding:4mm}
     .b-brand{font-size:10pt;font-weight:bold;letter-spacing:.5px;text-shadow:0 1px 3px rgba(0,0,0,.6)}
     .b-mark{font-size:12pt}
