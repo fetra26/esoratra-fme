@@ -11,7 +11,13 @@ export default function Inscription() {
   const [membres, setMembres] = useState([])
   const [form, setForm] = useState(empty)
   const [pay, setPay] = useState({ type: '', numero_recu: '', date_envoi: '', reference: '' })
+  const [kilasyList, setKilasyList] = useState([])
   const [toast, setToast] = useState('')
+
+  useEffect(() => {
+    supabase.from('kilasy').select('*').order('nom').then(({ data }) =>
+      setKilasyList((data || []).sort((a, b) => a.nom.localeCompare(b.nom, 'fr', { numeric: true }))))
+  }, [])
 
   const loadEglises = useCallback(async () => {
     const { data } = await supabase.from('eglises').select('*').order('nom')
@@ -101,7 +107,12 @@ export default function Inscription() {
           </div>
           {show(['Mpisavalalana', 'Mpisantatra']) &&
             <div className="field"><label>Kilasim-pandrosoana</label>
-              <input value={form.kilasy} onChange={e => set('kilasy', e.target.value)} placeholder="Ex : Sakaiza, Mpiara-dia…" /></div>}
+              <select value={form.kilasy} onChange={e => set('kilasy', e.target.value)}>
+                <option value="">— choisir —</option>
+                {kilasyList.map(k => <option key={k.id} value={k.nom}>{k.nom}</option>)}
+              </select>
+              {!kilasyList.length && <span className="hint">Aucun kilasy défini — ajoutez-en dans l'onglet « Kilasy ».</span>}
+            </div>}
           {show(['Mpisavalalana']) &&
             <div className="field"><label className="check">
               <input type="checkbox" checked={form.bapteme} onChange={e => set('bapteme', e.target.checked)} />

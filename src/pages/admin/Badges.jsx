@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../lib/supabase'
 import { printBadges } from '../../lib/badges'
 import { CAT_CLASS } from '../../lib/constants'
-import QRCode from 'qrcode'
 import Toast from '../../components/Toast'
 
 export default function Badges() {
@@ -36,14 +35,9 @@ export default function Badges() {
     return list
   }
 
-  async function doPreview() {
+  function doPreview() {
     const list = scope().slice(0, 24)
-    const out = []
-    for (const m of list) {
-      const qr = await QRCode.toDataURL(m.code || m.id, { margin: 1, width: 120 })
-      out.push({ ...m, qr })
-    }
-    setPreview(out)
+    setPreview(list)
     if (!list.length) setToast('Aucun membre dans cette sélection')
   }
   async function doPrint() {
@@ -80,11 +74,13 @@ export default function Badges() {
           <h2>Aperçu ({preview.length})</h2>
           {preview.map(m => (
             <div className="bdg" key={m.id}>
-              <img src={m.qr} alt="QR" />
               <div>
                 <span className={'cat-pill ' + CAT_CLASS[m.categorie]}>{m.categorie}</span>
                 <div className="bn">{m.nom}</div>
-                <div className="be">{egById[m.eglise_id]}{distByEglise[m.eglise_id] ? ' · ' + distByEglise[m.eglise_id] : ''} · {m.code}</div>
+                <div className="be">
+                  Distrika : {distByEglise[m.eglise_id] || '—'} · Fiangonana : {egById[m.eglise_id] || '—'}
+                  {m.kilasy ? ' · K.P : ' + m.kilasy : ''}
+                </div>
               </div>
             </div>
           ))}

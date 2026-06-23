@@ -2,20 +2,24 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { APP } from '../lib/constants'
 
-// Pages admin à large mise en page (tables côte à côte)
-const WIDE = ['/structure', '/utilisateurs', '/membres']
+// Pages à large mise en page (tables côte à côte / tableau de bord)
+const WIDE = ['/dashboard', '/structure', '/utilisateurs', '/membres']
 
 const NAVS = {
   admin: [
+    ['/dashboard', '📊', 'Tableau'],
     ['/structure', '🏛️', 'Structure'],
     ['/utilisateurs', '👤', 'Comptes'],
     ['/membres', '👥', 'Membres'],
+    ['/kilasy', '🎓', 'Kilasy'],
     ['/export', '⬇️', 'Export'],
     ['/badges', '🪪', 'Badges']
   ],
   responsable: [
+    ['/dashboard', '📊', 'Tableau'],
     ['/inscription', '📝', 'Inscription'],
     ['/listes', '📋', 'Listes'],
+    ['/kilasy', '🎓', 'Kilasy'],
     ['/encadrement', '🧭', 'Encadrement']
   ]
 }

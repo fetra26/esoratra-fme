@@ -3,6 +3,8 @@ import { useAuth } from './context/AuthContext'
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import Pending from './pages/Pending'
+import Dashboard from './pages/Dashboard'
+import Kilasy from './pages/Kilasy'
 import Structure from './pages/admin/Structure'
 import Utilisateurs from './pages/admin/Utilisateurs'
 import Membres from './pages/admin/Membres'
@@ -62,8 +64,10 @@ export default function App() {
   return (
     <Layout>
       <Routes>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/kilasy" element={<Kilasy />} />
         {role === 'admin' && <>
-          <Route path="/" element={<Navigate to="/structure" replace />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/structure" element={<Structure />} />
           <Route path="/utilisateurs" element={<Utilisateurs />} />
           <Route path="/membres" element={<Membres />} />
@@ -71,7 +75,7 @@ export default function App() {
           <Route path="/badges" element={<Badges />} />
         </>}
         {role === 'responsable' && <>
-          <Route path="/" element={<Navigate to="/inscription" replace />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/inscription" element={<Inscription />} />
           <Route path="/listes" element={<Listes />} />
           <Route path="/encadrement" element={<Encadrement />} />
