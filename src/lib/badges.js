@@ -57,7 +57,8 @@ export async function printBadges(membres, { egById = {}, distByEglise = {} } = 
 
   const w = window.open('', '_blank')
   w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Badges eSoratra FME</title><style>
-    *{box-sizing:border-box;margin:0;font-family:'Segoe UI',Arial,Helvetica,sans-serif}
+    *{box-sizing:border-box;margin:0;font-family:'Segoe UI',Arial,Helvetica,sans-serif;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact}
     body{padding:8mm;background:#e9edeb}
     /* 6 badges par page A4 : 2 colonnes x 3 lignes */
     .sheet{display:grid;grid-template-columns:repeat(2,1fr);gap:6mm;justify-items:center}
