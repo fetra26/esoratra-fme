@@ -1,7 +1,17 @@
+import { EVENT } from './constants'
+
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g,
   c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
 
-// Charge un fichier (le logo) en data URL pour une impression fiable (image garantie chargée).
+// Couleur par catégorie (tri visuel rapide au camp)
+const CATCOLOR = {
+  Mpisavalalana: '#0e7c66', // vert
+  Mpisantatra: '#2563eb',   // bleu
+  Encadreur: '#b45309',     // ambre
+  Hafa: '#7c3aed'           // violet
+}
+
+// Charge un fichier (le logo) en data URL pour une impression fiable.
 async function toDataUrl(url) {
   try {
     const res = await fetch(url)
@@ -18,45 +28,60 @@ async function toDataUrl(url) {
 export async function printBadges(membres, { egById = {}, distByEglise = {} } = {}) {
   if (!membres.length) return false
   const logo = await toDataUrl(location.origin + '/image.png')
+  const event = EVENT.nom.split('—')[0].trim()
 
-  const cards = membres.map(m => `<div class="badge">
-    <div class="b-top">
-      <div class="b-brand"><span class="b-mark">⛺</span> eSoratra FME</div>
-      <div class="b-cat">${esc(m.categorie)}</div>
-    </div>
-    <div class="b-body">
-      <div class="b-name">${esc(m.nom)}</div>
-      <div class="b-rows">
-        <div class="b-row"><span class="k">Distrika</span><span class="v">${esc(distByEglise[m.eglise_id] || '—')}</span></div>
-        <div class="b-row"><span class="k">Fiangonana</span><span class="v">${esc(egById[m.eglise_id] || '—')}</span></div>
-        <div class="b-row"><span class="k">K.P</span><span class="v">${esc(m.kilasy || '—')}</span></div>
+  const cards = membres.map(m => {
+    const color = CATCOLOR[m.categorie] || '#0e7c66'
+    return `<div class="badge">
+      <div class="b-stripe" style="background:${color}"></div>
+      <div class="b-content">
+        <div class="b-top">
+          <div class="b-brand">⛺ eSoratra FME<span class="b-ev">${esc(event)}</span></div>
+          <div class="b-logo"></div>
+        </div>
+        <div class="b-cat" style="background:${color}">${esc(m.categorie)}</div>
+        <div class="b-plabel">Participant</div>
+        <div class="b-name">${esc(m.nom)}</div>
+        <div class="b-rows">
+          <div class="b-row"><span class="k">Distrika</span><span class="v">${esc(distByEglise[m.eglise_id] || '—')}</span></div>
+          <div class="b-row"><span class="k">Fiangonana</span><span class="v">${esc(egById[m.eglise_id] || '—')}</span></div>
+          <div class="b-row"><span class="k">K.P</span><span class="v">${esc(m.kilasy || '—')}</span></div>
+        </div>
+        <div class="b-foot">
+          <span>${esc(EVENT.dates)} · ${esc(EVENT.lieu)}</span>
+          <span class="b-code">${esc(m.code || '')}</span>
+        </div>
       </div>
-    </div>
-  </div>`).join('')
+    </div>`
+  }).join('')
 
   const w = window.open('', '_blank')
   w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Badges eSoratra FME</title><style>
-    *{box-sizing:border-box;margin:0;font-family:Arial,Helvetica,sans-serif}
-    body{padding:8mm;background:#eee}
+    *{box-sizing:border-box;margin:0;font-family:'Segoe UI',Arial,Helvetica,sans-serif}
+    body{padding:8mm;background:#e9edeb}
     /* 6 badges par page A4 : 2 colonnes x 3 lignes */
     .sheet{display:grid;grid-template-columns:repeat(2,1fr);gap:6mm;justify-items:center}
-    .badge{width:92mm;height:86mm;border-radius:4mm;overflow:hidden;background:#fff;
-      box-shadow:0 0 0 .3mm #0a5e4d;display:flex;flex-direction:column;page-break-inside:avoid}
-    .b-top{height:34mm;background-image:linear-gradient(180deg,rgba(8,40,32,.15),rgba(8,40,32,.92)),url('${logo}');
-      background-size:cover;background-position:center;
-      color:#fff;display:flex;flex-direction:column;justify-content:space-between;padding:4mm}
-    .b-brand{font-size:10pt;font-weight:bold;letter-spacing:.5px;text-shadow:0 1px 3px rgba(0,0,0,.6)}
-    .b-mark{font-size:12pt}
-    .b-cat{align-self:flex-start;background:#c79a3c;color:#3a2c08;font-weight:bold;font-size:10pt;
-      text-transform:uppercase;letter-spacing:.5px;padding:1.5mm 3.5mm;border-radius:2mm;
-      box-shadow:0 1mm 2mm rgba(0,0,0,.3)}
-    .b-body{flex:1;padding:5mm;display:flex;flex-direction:column}
-    .b-name{font-size:19pt;font-weight:bold;color:#16241f;line-height:1.1;margin-bottom:3.5mm;
-      border-bottom:.4mm solid #e3e8e5;padding-bottom:3mm}
-    .b-rows{display:flex;flex-direction:column;gap:2.5mm}
-    .b-row{display:flex;align-items:baseline;gap:3mm;font-size:11pt}
-    .b-row .k{flex:none;width:26mm;color:#0e7c66;font-weight:bold;text-transform:uppercase;font-size:8.5pt;letter-spacing:.5px}
-    .b-row .v{color:#26332e;font-weight:600}
+    .badge{width:92mm;height:86mm;border-radius:3mm;overflow:hidden;background:#fff;display:flex;
+      box-shadow:0 0 0 .25mm #cdd6d2;page-break-inside:avoid}
+    .b-stripe{width:5mm;flex:none}
+    .b-content{flex:1;display:flex;flex-direction:column;padding:4.5mm 5mm}
+    .b-top{display:flex;justify-content:space-between;align-items:flex-start}
+    .b-brand{font-size:11pt;font-weight:800;color:#0a5e4d;line-height:1.1}
+    .b-ev{display:block;font-size:7.5pt;font-weight:600;color:#8a948f;letter-spacing:.3px;margin-top:1px}
+    .b-logo{width:22mm;height:14mm;flex:none;background-image:url('${logo}');
+      background-size:contain;background-repeat:no-repeat;background-position:right center}
+    .b-cat{align-self:flex-start;color:#fff;font-weight:800;font-size:9pt;text-transform:uppercase;
+      letter-spacing:.6px;padding:1.3mm 3.5mm;border-radius:99mm;margin-top:2mm}
+    .b-plabel{font-size:7.5pt;text-transform:uppercase;letter-spacing:1.2px;color:#9aa4a0;margin-top:3mm}
+    .b-name{font-size:18pt;font-weight:800;color:#15201c;line-height:1.05;margin-top:.5mm}
+    .b-rows{margin-top:3mm;display:flex;flex-direction:column;gap:2mm}
+    .b-row{display:flex;align-items:baseline;gap:2.5mm;font-size:10.5pt}
+    .b-row .k{flex:none;width:24mm;color:#5a6963;font-weight:700;text-transform:uppercase;
+      font-size:7.5pt;letter-spacing:.5px}
+    .b-row .v{color:#1f2b27;font-weight:600}
+    .b-foot{margin-top:auto;padding-top:2.5mm;border-top:.3mm solid #e3e8e5;display:flex;
+      justify-content:space-between;align-items:center;font-size:7.5pt;color:#8a948f}
+    .b-code{font-family:'Courier New',monospace;font-weight:700;font-size:9.5pt;color:#0a5e4d;letter-spacing:1px}
     @media print{body{padding:0;background:#fff}.sheet{gap:4mm}@page{size:A4;margin:8mm}}
   </style></head><body><div class="sheet">${cards}</div>
   <script>window.onload=function(){setTimeout(function(){window.print()},400)}<\/script></body></html>`)
