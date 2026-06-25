@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../lib/supabase'
-import { CATEGORIES, CAT_LABEL, CAT_CLASS, FRAIS, ANDRAIKITRA, PAY_TYPES, genCode, fmt, memberLine } from '../../lib/constants'
+import { CATEGORIES, CAT_LABEL, CAT_CLASS, FRAIS, ANDRAIKITRA, PAY_TYPES, KILASY, genCode, fmt, memberLine } from '../../lib/constants'
 import Toast from '../../components/Toast'
 
 const empty = { categorie: 'Mpisavalalana', nom: '', sexe: 'L', date_naissance: '', kilasy: '', bapteme: false, contact: '', marim_pandrosoana: '', andraikitra: ANDRAIKITRA[0], chef_guide: '', date_cg: '' }
@@ -11,13 +11,7 @@ export default function Inscription() {
   const [membres, setMembres] = useState([])
   const [form, setForm] = useState(empty)
   const [pay, setPay] = useState({ type: '', numero_recu: '', date_envoi: '', reference: '' })
-  const [kilasyList, setKilasyList] = useState([])
   const [toast, setToast] = useState('')
-
-  useEffect(() => {
-    supabase.from('kilasy').select('*').order('nom').then(({ data }) =>
-      setKilasyList((data || []).sort((a, b) => a.nom.localeCompare(b.nom, 'fr', { numeric: true }))))
-  }, [])
 
   const loadEglises = useCallback(async () => {
     const { data } = await supabase.from('eglises').select('*').order('nom')
@@ -89,7 +83,7 @@ export default function Inscription() {
         <div className="card">
           <h2>Ajouter un membre</h2>
           <div className="field"><label>Catégorie <span className="req">*</span></label>
-            <select value={cat} onChange={e => set('categorie', e.target.value)}>
+            <select value={cat} onChange={e => setForm(f => ({ ...f, categorie: e.target.value, kilasy: '' }))}>
               {CATEGORIES.map(c => <option key={c} value={c}>{CAT_LABEL[c]}</option>)}
             </select>
           </div>
@@ -109,9 +103,9 @@ export default function Inscription() {
             <div className="field"><label>Kilasim-pandrosoana</label>
               <select value={form.kilasy} onChange={e => set('kilasy', e.target.value)}>
                 <option value="">— choisir —</option>
-                {kilasyList.map(k => <option key={k.id} value={k.nom}>{k.nom}</option>)}
+                {(KILASY[cat] || []).map(k =>
+                  <option key={k.nom} value={k.nom}>{k.nom}{k.age ? ` — ${k.age} taona` : ''}</option>)}
               </select>
-              {!kilasyList.length && <span className="hint">Aucun kilasy défini — ajoutez-en dans l'onglet « Kilasy ».</span>}
             </div>}
           {show(['Mpisavalalana']) &&
             <div className="field"><label className="check">

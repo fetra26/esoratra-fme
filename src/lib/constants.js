@@ -10,6 +10,19 @@ export const EVENT = {
 
 export const CATEGORIES = ['Mpisavalalana', 'Mpisantatra', 'Encadreur', 'Hafa']
 
+// Kilasim-pandrosoana par catégorie (listes officielles FME)
+export const KILASY = {
+  Mpisavalalana: [
+    { nom: 'Sakaiza' }, { nom: 'Namana' }, { nom: 'Mpanazava' },
+    { nom: 'Mpamakilay' }, { nom: 'Mpandehalavitra' }, { nom: 'Mpitarika' }
+  ],
+  Mpisantatra: [
+    { nom: 'Ondrikely', age: 4 }, { nom: 'Voronkely', age: 5 },
+    { nom: 'Tantely mazoto miasa', age: 6 }, { nom: 'Tanamasoandro', age: 7 },
+    { nom: 'Mpanorina', age: 8 }, { nom: 'Tanana manampy', age: 9 }
+  ]
+}
+
 export const CAT_LABEL = {
   Mpisavalalana: 'Mpisavalalana (Explorateur)',
   Mpisantatra: 'Mpisantatra (Aventurier)',
