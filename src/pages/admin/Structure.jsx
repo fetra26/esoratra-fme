@@ -98,12 +98,15 @@ export default function Structure() {
         {/* ---------- DISTRICTS ---------- */}
         <div className="card">
           <h2>Districts <span className="count-badge">{districts.length}</span></h2>
-          <div className="row">
-            <div className="field" style={{ marginBottom: 0 }}>
-              <input value={nd} onChange={e => setNd(e.target.value)} placeholder="Nom du district"
-                onKeyDown={e => e.key === 'Enter' && addDistrict()} />
+          <div className="blk">
+            <div className="blk-h">➕ Ajouter un district</div>
+            <div className="row">
+              <div className="field" style={{ marginBottom: 0 }}>
+                <input value={nd} onChange={e => setNd(e.target.value)} placeholder="Nom du district"
+                  onKeyDown={e => e.key === 'Enter' && addDistrict()} />
+              </div>
+              <button className="btn btn-green btn-sm" onClick={addDistrict}>＋ Ajouter</button>
             </div>
-            <button className="btn btn-green btn-sm" onClick={addDistrict}>＋</button>
           </div>
           {districts.length > PAGE && (
             <input className="tbl-search" value={q}
@@ -149,28 +152,36 @@ export default function Structure() {
         {/* ---------- ÉGLISES ---------- */}
         <div className="card">
           <h2>Églises <span className="count-badge">{eglises.length}</span></h2>
-          <div className="field" style={{ marginBottom: 8 }}>
-            <select value={ed} onChange={e => setEd(e.target.value)}>
-              {districts.length ? districts.map(d => <option key={d.id} value={d.id}>{d.nom}</option>)
-                : <option value="">— créez un district —</option>}
-            </select>
+
+          <div className="blk">
+            <div className="blk-h">➕ Ajouter une église</div>
+            <div className="field" style={{ marginBottom: 8 }}>
+              <label>Dans le district</label>
+              <select value={ed} onChange={e => setEd(e.target.value)}>
+                {districts.length ? districts.map(d => <option key={d.id} value={d.id}>{d.nom}</option>)
+                  : <option value="">— créez un district —</option>}
+              </select>
+            </div>
+            <div className="row">
+              <div className="field" style={{ marginBottom: 0 }}>
+                <label>Nom de l'église</label>
+                <input value={ne} onChange={e => setNe(e.target.value)} placeholder="Ex : Ambodimanga"
+                  onKeyDown={e => e.key === 'Enter' && addEglise()} />
+              </div>
+              <button className="btn btn-green btn-sm" onClick={addEglise} style={{ alignSelf: 'flex-end' }}>＋ Ajouter</button>
+            </div>
           </div>
+
+          <div className="blk-label">🔎 Filtrer la liste</div>
           <div className="row">
             <div className="field" style={{ marginBottom: 0 }}>
-              <input value={ne} onChange={e => setNe(e.target.value)} placeholder="Nom de l'église"
-                onKeyDown={e => e.key === 'Enter' && addEglise()} />
-            </div>
-            <button className="btn btn-green btn-sm" onClick={addEglise}>＋</button>
-          </div>
-          <div className="row" style={{ marginTop: 10 }}>
-            <div className="field" style={{ marginBottom: 0 }}>
               <select value={fe} onChange={e => { setFe(e.target.value); setPageE(1) }}>
-                <option value="">Tous districts</option>
+                <option value="">Tous les districts</option>
                 {districts.map(d => <option key={d.id} value={d.id}>{d.nom}</option>)}
               </select>
             </div>
             <div className="field" style={{ marginBottom: 0 }}>
-              <input value={qe} onChange={e => { setQe(e.target.value); setPageE(1) }} placeholder="🔎 Église…" />
+              <input value={qe} onChange={e => { setQe(e.target.value); setPageE(1) }} placeholder="Nom d'église…" />
             </div>
           </div>
           <div className="tbl-wrap scroll-y">
