@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { supabase } from '../../lib/supabase'
+import { fetchAllRows } from '../../lib/supabase'
 import { CAT_CLASS, fmt, nf } from '../../lib/constants'
 
 export default function Listes() {
@@ -8,12 +8,12 @@ export default function Listes() {
   const [paiements, setPaiements] = useState([])
 
   const load = useCallback(async () => {
-    const [{ data: e }, { data: m }, { data: p }] = await Promise.all([
-      supabase.from('eglises').select('*').order('nom'),
-      supabase.from('membres').select('*'),
-      supabase.from('paiements').select('*')
+    const [e, m, p] = await Promise.all([
+      fetchAllRows('eglises', '*', q => q.order('nom')),
+      fetchAllRows('membres'),
+      fetchAllRows('paiements')
     ])
-    setEglises(e || []); setMembres(m || []); setPaiements(p || [])
+    setEglises(e); setMembres(m); setPaiements(p)
   }, [])
   useEffect(() => { load() }, [load])
 

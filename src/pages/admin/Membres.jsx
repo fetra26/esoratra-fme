@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { supabase } from '../../lib/supabase'
+import { fetchAllRows } from '../../lib/supabase'
 import { CAT_CLASS, memberLine, fmt, nf } from '../../lib/constants'
 import Pager from '../../components/Pager'
 
@@ -15,12 +15,12 @@ export default function Membres() {
   const [page, setPage] = useState(1)
 
   const load = useCallback(async () => {
-    const [{ data: d }, { data: e }, { data: m }] = await Promise.all([
-      supabase.from('districts').select('*').order('nom'),
-      supabase.from('eglises').select('*').order('nom'),
-      supabase.from('membres').select('*').order('nom')
+    const [d, e, m] = await Promise.all([
+      fetchAllRows('districts', '*', q => q.order('nom')),
+      fetchAllRows('eglises', '*', q => q.order('nom')),
+      fetchAllRows('membres', '*', q => q.order('nom'))
     ])
-    setDistricts(d || []); setEglises(e || []); setMembres(m || [])
+    setDistricts(d); setEglises(e); setMembres(m)
   }, [])
   useEffect(() => { load() }, [load])
 

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { supabase } from '../lib/supabase'
+import { fetchAllRows } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { CATEGORIES, CAT_CLASS, nf, fmt } from '../lib/constants'
 
@@ -12,13 +12,13 @@ export default function Dashboard() {
 
   const load = useCallback(async () => {
     // Les politiques RLS limitent déjà un responsable à son district.
-    const [{ data: d }, { data: e }, { data: m }, { data: p }] = await Promise.all([
-      supabase.from('districts').select('*'),
-      supabase.from('eglises').select('*'),
-      supabase.from('membres').select('*'),
-      supabase.from('paiements').select('*')
+    const [d, e, m, p] = await Promise.all([
+      fetchAllRows('districts'),
+      fetchAllRows('eglises'),
+      fetchAllRows('membres'),
+      fetchAllRows('paiements')
     ])
-    setDistricts(d || []); setEglises(e || []); setMembres(m || []); setPaiements(p || [])
+    setDistricts(d); setEglises(e); setMembres(m); setPaiements(p)
   }, [])
   useEffect(() => { load() }, [load])
 

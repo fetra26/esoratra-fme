@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { supabase } from '../../lib/supabase'
+import { fetchAllRows } from '../../lib/supabase'
 import { exportParEglise, exportParDistrict } from '../../lib/exports'
 import Toast from '../../components/Toast'
 
@@ -8,12 +8,12 @@ export default function ExportPage() {
   const [busy, setBusy] = useState(false)
 
   async function fetchAll() {
-    const [{ data: d }, { data: e }, { data: m }] = await Promise.all([
-      supabase.from('districts').select('*').order('nom'),
-      supabase.from('eglises').select('*').order('nom'),
-      supabase.from('membres').select('*').order('nom')
+    const [d, e, m] = await Promise.all([
+      fetchAllRows('districts', '*', q => q.order('nom')),
+      fetchAllRows('eglises', '*', q => q.order('nom')),
+      fetchAllRows('membres', '*', q => q.order('nom'))
     ])
-    return { districts: d || [], eglises: e || [], membres: m || [] }
+    return { districts: d, eglises: e, membres: m }
   }
   async function run(mode) {
     setBusy(true)

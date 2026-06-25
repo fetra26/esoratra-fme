@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { supabase } from '../../lib/supabase'
+import { fetchAllRows } from '../../lib/supabase'
 import { printBadges } from '../../lib/badges'
 import { CAT_CLASS } from '../../lib/constants'
 import Toast from '../../components/Toast'
@@ -14,12 +14,12 @@ export default function Badges() {
   const [toast, setToast] = useState('')
 
   const load = useCallback(async () => {
-    const [{ data: d }, { data: e }, { data: m }] = await Promise.all([
-      supabase.from('districts').select('*').order('nom'),
-      supabase.from('eglises').select('*').order('nom'),
-      supabase.from('membres').select('*').order('nom')
+    const [d, e, m] = await Promise.all([
+      fetchAllRows('districts', '*', q => q.order('nom')),
+      fetchAllRows('eglises', '*', q => q.order('nom')),
+      fetchAllRows('membres', '*', q => q.order('nom'))
     ])
-    setDistricts(d || []); setEglises(e || []); setMembres(m || [])
+    setDistricts(d); setEglises(e); setMembres(m)
   }, [])
   useEffect(() => { load() }, [load])
 

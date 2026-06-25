@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { supabase } from '../../lib/supabase'
+import { fetchAllRows } from '../../lib/supabase'
 import { RATIO } from '../../lib/constants'
 
 export default function Encadrement() {
@@ -7,11 +7,11 @@ export default function Encadrement() {
   const [membres, setMembres] = useState([])
 
   const load = useCallback(async () => {
-    const [{ data: e }, { data: m }] = await Promise.all([
-      supabase.from('eglises').select('*').order('nom'),
-      supabase.from('membres').select('*')
+    const [e, m] = await Promise.all([
+      fetchAllRows('eglises', '*', q => q.order('nom')),
+      fetchAllRows('membres')
     ])
-    setEglises(e || []); setMembres(m || [])
+    setEglises(e); setMembres(m)
   }, [])
   useEffect(() => { load() }, [load])
 
