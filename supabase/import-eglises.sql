@@ -21,9 +21,9 @@ select x.nom from (values
   ('Brickaville'),
   ('Fénérive-Est'),
   ('Mahanoro'),
-  ('Mananara Centre'),
-  ('Mananara 2'),
-  ('Sandrakatsy'),
+  ('Mananara I'),
+  ('Mananara II'),
+  ('Mananara III'),
   ('Magarano'),
   ('Maroantsetra 1'),
   ('Maroantsetra 2'),
@@ -38,7 +38,7 @@ select x.nom from (values
   ('Vatomandry'),
   ('Vavatenina'),
   ('Maroantsetra 4'),
-  ('Manambolosy'),
+  ('Mananara IV'),
   ('Amboasary')
 ) as x(nom)
 where not exists (select 1 from districts d where lower(btrim(d.nom)) = lower(btrim(x.nom)));
@@ -299,7 +299,7 @@ cross join (values
 where lower(btrim(d.nom)) = lower(btrim('Mahanoro'))
   and not exists (select 1 from eglises e where e.district_id = d.id and lower(btrim(e.nom)) = lower(btrim(v.nom)));
 
--- Mananara Centre  (58 églises)
+-- Mananara I  (58 églises)
 insert into eglises (district_id, nom)
 select d.id, v.nom
 from districts d
@@ -363,10 +363,10 @@ cross join (values
   ('AMBODIMANGAMARO'),
   ('ANTANAMBAORIVOTRA')
 ) as v(nom)
-where lower(btrim(d.nom)) = lower(btrim('Mananara Centre'))
+where lower(btrim(d.nom)) = lower(btrim('Mananara I'))
   and not exists (select 1 from eglises e where e.district_id = d.id and lower(btrim(e.nom)) = lower(btrim(v.nom)));
 
--- Mananara 2  (35 églises)
+-- Mananara II  (35 églises)
 insert into eglises (district_id, nom)
 select d.id, v.nom
 from districts d
@@ -407,10 +407,10 @@ cross join (values
   ('ANDRANOMANDEVY/AMBODITONDINGA'),
   ('ANTEVIALAFOTSY')
 ) as v(nom)
-where lower(btrim(d.nom)) = lower(btrim('Mananara 2'))
+where lower(btrim(d.nom)) = lower(btrim('Mananara II'))
   and not exists (select 1 from eglises e where e.district_id = d.id and lower(btrim(e.nom)) = lower(btrim(v.nom)));
 
--- Sandrakatsy  (28 églises)
+-- Mananara III  (28 églises)
 insert into eglises (district_id, nom)
 select d.id, v.nom
 from districts d
@@ -444,7 +444,7 @@ cross join (values
   ('AMBODIVASEVA'),
   ('ANTANAMBAO MANDRESY')
 ) as v(nom)
-where lower(btrim(d.nom)) = lower(btrim('Sandrakatsy'))
+where lower(btrim(d.nom)) = lower(btrim('Mananara III'))
   and not exists (select 1 from eglises e where e.district_id = d.id and lower(btrim(e.nom)) = lower(btrim(v.nom)));
 
 -- Magarano  (39 églises)
@@ -854,7 +854,7 @@ cross join (values
 where lower(btrim(d.nom)) = lower(btrim('Maroantsetra 4'))
   and not exists (select 1 from eglises e where e.district_id = d.id and lower(btrim(e.nom)) = lower(btrim(v.nom)));
 
--- Manambolosy  (25 églises)
+-- Mananara IV  (25 églises)
 insert into eglises (district_id, nom)
 select d.id, v.nom
 from districts d
@@ -885,7 +885,7 @@ cross join (values
   ('Sahavia'),
   ('Tsaratanana')
 ) as v(nom)
-where lower(btrim(d.nom)) = lower(btrim('Manambolosy'))
+where lower(btrim(d.nom)) = lower(btrim('Mananara IV'))
   and not exists (select 1 from eglises e where e.district_id = d.id and lower(btrim(e.nom)) = lower(btrim(v.nom)));
 
 -- Amboasary  (13 églises)

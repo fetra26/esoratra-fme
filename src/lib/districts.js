@@ -4,7 +4,7 @@ export const DISTRICTS = [
   'Moramanga 1', 'Moramanga 2', 'Amboasary', "Anosibe an'Ala", 'Ambohimasina',
   'Antsahatanteraka', 'Tsinjoarivo', 'Ambodirano', 'Amparafa', 'Tanambe',
   'Andilamena', 'Fénérive-Est', 'Soanierana Ivongo', 'Sainte-Marie', 'Vavatenina',
-  'Mananara Centre', 'Mananara 2', 'Sandrakatsy', 'Manambolosy',
+  'Mananara I', 'Mananara II', 'Mananara III', 'Mananara IV',
   'Maroantsetra 1', 'Maroantsetra 2', 'Maroantsetra 3', 'Maroantsetra 4'
 ]
 
