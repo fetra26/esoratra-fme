@@ -62,7 +62,15 @@ export default function Structure() {
     setEditD(null); load()
   }
   async function delDistrict(id, nom) {
-    if (!confirm(`Supprimer le district « ${nom} » et toutes ses églises ?`)) return
+    const egIds = eglises.filter(e => e.district_id === id).map(e => e.id)
+    let msg = `Supprimer le district « ${nom} » ?`
+    if (egIds.length) {
+      const { count } = await supabase.from('membres')
+        .select('id', { count: 'exact', head: true }).in('eglise_id', egIds)
+      msg = `⚠️ ATTENTION\nLe district « ${nom} » contient ${egIds.length} église(s) et ${count || 0} membre(s).\n`
+        + `TOUT sera supprimé DÉFINITIVEMENT. Continuer ?`
+    }
+    if (!confirm(msg)) return
     await supabase.from('districts').delete().eq('id', id); setToast('District supprimé'); load()
   }
 
@@ -86,7 +94,12 @@ export default function Structure() {
     setEditE(null); load()
   }
   async function delEglise(id, nom) {
-    if (!confirm(`Supprimer l'église « ${nom} » et ses membres ?`)) return
+    const { count } = await supabase.from('membres')
+      .select('id', { count: 'exact', head: true }).eq('eglise_id', id)
+    const msg = count
+      ? `⚠️ L'église « ${nom} » contient ${count} membre(s) qui seront aussi supprimés DÉFINITIVEMENT. Continuer ?`
+      : `Supprimer l'église « ${nom} » ?`
+    if (!confirm(msg)) return
     await supabase.from('eglises').delete().eq('id', id); setToast('Église supprimée'); load()
   }
 

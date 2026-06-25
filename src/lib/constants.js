@@ -49,7 +49,7 @@ export const CAT_CLASS = {
 export function genCode() {
   const a = 'ABCDEFGHJKLMNPRSTUVWXYZ23456789'
   let s = ''
-  for (let i = 0; i < 5; i++) s += a[Math.floor(Math.random() * a.length)]
+  for (let i = 0; i < 6; i++) s += a[Math.floor(Math.random() * a.length)]
   return s
 }
 

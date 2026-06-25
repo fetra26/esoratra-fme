@@ -38,19 +38,31 @@ export default function Inscription() {
     if (!form.nom.trim()) return setToast("Saisissez l'anarana")
     const m = {
       eglise_id: egId, categorie: cat, nom: form.nom.trim(), sexe: form.sexe,
-      code: genCode(), frais: FRAIS[cat]
+      frais: FRAIS[cat]
     }
     if (cat === 'Mpisavalalana' || cat === 'Mpisantatra') { m.date_naissance = form.date_naissance || null; m.kilasy = form.kilasy }
     if (cat === 'Mpisavalalana') m.bapteme = form.bapteme
     if (cat === 'Encadreur') { m.date_naissance = form.date_naissance || null; m.contact = form.contact; m.marim_pandrosoana = form.marim_pandrosoana }
     if (cat === 'Hafa') { m.contact = form.contact; m.andraikitra = form.andraikitra; m.chef_guide = form.chef_guide; m.date_cg = form.date_cg || null }
-    const { error } = await supabase.from('membres').insert(m)
+
+    // Insertion avec code unique : on retente si collision (code 23505)
+    let error = null
+    for (let i = 0; i < 8; i++) {
+      m.code = genCode()
+      const res = await supabase.from('membres').insert(m)
+      error = res.error
+      if (!error) break
+      if (error.code !== '23505') break // autre erreur : on arrête
+    }
     if (error) return setToast('Erreur: ' + error.message)
     setForm({ ...empty, categorie: cat })
     setToast(m.nom + ' ajouté'); loadMembres()
   }
-  async function delMember(id) {
-    await supabase.from('membres').delete().eq('id', id); loadMembres()
+  async function delMember(id, nom) {
+    if (!confirm(`Supprimer « ${nom} » de la liste ? Cette action est définitive.`)) return
+    const { error } = await supabase.from('membres').delete().eq('id', id)
+    if (error) return setToast('Erreur: ' + error.message)
+    setToast('Membre supprimé'); loadMembres()
   }
   async function savePayment() {
     if (!egId) return
@@ -139,7 +151,7 @@ export default function Inscription() {
               <div><span className={'cat-pill ' + CAT_CLASS[m.categorie]}>{m.categorie}</span>
                 <div className="nm">{m.nom}</div><div className="sb">{memberLine(m)}</div></div>
               <div className="rt"><span className="sb">{fmt(m.frais)}</span>
-                <button className="x" onClick={() => delMember(m.id)}>×</button></div>
+                <button className="x" onClick={() => delMember(m.id, m.nom)}>×</button></div>
             </div>
           )) : <div className="empty">Aucun membre pour cette église.</div>}
           <div className="total-bar"><span className="tl">Frais généraux</span><span className="tv">{fmt(total)}</span></div>
