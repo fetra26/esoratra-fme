@@ -4,7 +4,7 @@ import Layout from './components/Layout'
 import Login from './pages/Login'
 import Pending from './pages/Pending'
 import Dashboard from './pages/Dashboard'
-import Kilasy from './pages/Kilasy'
+// import Kilasy from './pages/Kilasy'  // désactivé : kilasy désormais fixe par catégorie
 import Structure from './pages/admin/Structure'
 import Utilisateurs from './pages/admin/Utilisateurs'
 import Membres from './pages/admin/Membres'
@@ -65,7 +65,7 @@ export default function App() {
     <Layout>
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/kilasy" element={<Kilasy />} />
+        {/* <Route path="/kilasy" element={<Kilasy />} /> */}
         {role === 'admin' && <>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/structure" element={<Structure />} />

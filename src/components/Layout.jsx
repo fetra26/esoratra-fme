@@ -11,7 +11,7 @@ const NAVS = {
     ['/structure', '🏛️', 'Structure'],
     ['/utilisateurs', '👤', 'Comptes'],
     ['/membres', '👥', 'Membres'],
-    ['/kilasy', '🎓', 'Kilasy'],
+    // ['/kilasy', '🎓', 'Kilasy'],  // désactivé : kilasy désormais fixe par catégorie
     ['/export', '⬇️', 'Export'],
     ['/badges', '🪪', 'Badges']
   ],
@@ -19,7 +19,7 @@ const NAVS = {
     ['/dashboard', '📊', 'Tableau'],
     ['/inscription', '📝', 'Inscription'],
     ['/listes', '📋', 'Listes'],
-    ['/kilasy', '🎓', 'Kilasy'],
+    // ['/kilasy', '🎓', 'Kilasy'],  // désactivé : kilasy désormais fixe par catégorie
     ['/encadrement', '🧭', 'Encadrement']
   ]
 }
