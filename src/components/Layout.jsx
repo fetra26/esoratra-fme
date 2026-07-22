@@ -18,11 +18,19 @@ const NAVS = {
   responsable: [
     ['/dashboard', '📊', 'Tableau'],
     ['/inscription', '📝', 'Inscription'],
-    ['/staff', '🛠️', 'Staff'],
     ['/listes', '📋', 'Listes'],
     // ['/kilasy', '🎓', 'Kilasy'],  // désactivé : kilasy désormais fixe par catégorie
     ['/encadrement', '🧭', 'Encadrement']
+  ],
+  sekretera: [
+    ['/staff', '🛠️', 'Staff']
   ]
+}
+
+const ROLE_LABEL = {
+  admin: 'Admin fédération',
+  responsable: 'Responsable district',
+  sekretera: 'Secrétaire du camp'
 }
 
 export default function Layout({ children }) {
@@ -35,7 +43,7 @@ export default function Layout({ children }) {
       <header className="topbar">
         <div className="mark">⛺</div>
         <div className="title">{APP.name}
-          <small>{role === 'admin' ? 'Admin fédération' : 'Responsable district'} · {profile?.email}</small>
+          <small>{ROLE_LABEL[role] || role} · {profile?.email}</small>
         </div>
         <button className="out" onClick={signOut}>Quitter</button>
       </header>

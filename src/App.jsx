@@ -78,9 +78,12 @@ export default function App() {
         {role === 'responsable' && <>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/inscription" element={<Inscription />} />
-          <Route path="/staff" element={<Staff />} />
           <Route path="/listes" element={<Listes />} />
           <Route path="/encadrement" element={<Encadrement />} />
+        </>}
+        {role === 'sekretera' && <>
+          <Route path="/" element={<Navigate to="/staff" replace />} />
+          <Route path="/staff" element={<Staff />} />
         </>}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

@@ -240,6 +240,7 @@ export default function Utilisateurs() {
           <div className="row" style={{ gap: 8 }}>
             <select value={newRole} onChange={e => setNewRole(e.target.value)}>
               <option value="responsable">Responsable district</option>
+              <option value="sekretera">Secrétaire du camp</option>
               <option value="admin">Admin fédération</option>
             </select>
             {newRole === 'responsable' && (
@@ -277,6 +278,7 @@ export default function Utilisateurs() {
                     <select value={p.role} onChange={e => setRole(p.id, e.target.value)}>
                       <option value="en_attente">En attente</option>
                       <option value="responsable">Responsable district</option>
+                      <option value="sekretera">Secrétaire du camp</option>
                       <option value="admin">Admin fédération</option>
                     </select>
                   </td>
