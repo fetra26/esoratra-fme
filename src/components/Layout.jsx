@@ -18,6 +18,7 @@ const NAVS = {
   responsable: [
     ['/dashboard', '📊', 'Tableau'],
     ['/inscription', '📝', 'Inscription'],
+    ['/staff', '🛠️', 'Staff'],
     ['/listes', '📋', 'Listes'],
     // ['/kilasy', '🎓', 'Kilasy'],  // désactivé : kilasy désormais fixe par catégorie
     ['/encadrement', '🧭', 'Encadrement']

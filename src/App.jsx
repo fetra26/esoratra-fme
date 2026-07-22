@@ -11,6 +11,7 @@ import Membres from './pages/admin/Membres'
 import ExportPage from './pages/admin/ExportPage'
 import Badges from './pages/admin/Badges'
 import Inscription from './pages/responsable/Inscription'
+import Staff from './pages/responsable/Staff'
 import Listes from './pages/responsable/Listes'
 import Encadrement from './pages/responsable/Encadrement'
 
@@ -77,6 +78,7 @@ export default function App() {
         {role === 'responsable' && <>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/inscription" element={<Inscription />} />
+          <Route path="/staff" element={<Staff />} />
           <Route path="/listes" element={<Listes />} />
           <Route path="/encadrement" element={<Encadrement />} />
         </>}
