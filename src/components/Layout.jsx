@@ -11,6 +11,7 @@ const NAVS = {
     ['/structure', '🏛️', 'Structure'],
     ['/utilisateurs', '👤', 'Comptes'],
     ['/membres', '👥', 'Membres'],
+    ['/staff', '🛠️', 'Staff'],
     // ['/kilasy', '🎓', 'Kilasy'],  // désactivé : kilasy désormais fixe par catégorie
     ['/export', '⬇️', 'Export'],
     ['/badges', '🪪', 'Badges']

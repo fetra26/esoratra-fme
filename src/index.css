@@ -187,6 +187,13 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);b
 .tbl th.act,.tbl td.act{text-align:right;white-space:nowrap;width:96px}
 .tbl th.money,.tbl td.money{text-align:right;white-space:nowrap}
 .tbl td.money{color:var(--green-dark);font-weight:600}
+.tbl th.chk,.tbl td.chk{width:34px;text-align:center}
+.tbl td.chk input{width:17px;height:17px;accent-color:var(--green);cursor:pointer}
+.tbl tbody tr.row-sel{background:var(--green-soft)}
+.modal-bg{position:fixed;inset:0;z-index:60;background:rgba(10,30,24,.5);display:flex;
+  align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto}
+.modal{background:var(--card);border-radius:16px;padding:22px;width:100%;max-width:460px;
+  box-shadow:0 30px 70px rgba(0,0,0,.35);margin:auto}
 .tbl td .muted{color:var(--muted)}
 .tbl-empty{text-align:center;color:var(--muted);padding:18px 12px}
 .tbl-inp{padding:7px 9px;font-size:14px;border-radius:7px}

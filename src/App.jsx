@@ -72,6 +72,7 @@ export default function App() {
           <Route path="/structure" element={<Structure />} />
           <Route path="/utilisateurs" element={<Utilisateurs />} />
           <Route path="/membres" element={<Membres />} />
+          <Route path="/staff" element={<Staff />} />
           <Route path="/export" element={<ExportPage />} />
           <Route path="/badges" element={<Badges />} />
         </>}
