@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
+import { printStaffBadges } from '../../lib/badges'
 import Toast from '../../components/Toast'
 
 const empty = { nom: '', andraikitra: '', contact: '' }
@@ -76,6 +77,13 @@ export default function Staff() {
 
       <div className="card">
         <h2><span>Liste du staff</span><span className="hint" style={{ margin: 0 }}>{list.length ? list.length + ' personne(s)' : ''}</span></h2>
+        {list.length > 0 && (
+          <div className="btn-row" style={{ marginBottom: 10 }}>
+            <button className="btn btn-primary btn-sm" onClick={() => { if (!printStaffBadges(list)) setToast('Aucun staff à imprimer') }}>
+              🖨 Imprimer les badges (A4)
+            </button>
+          </div>
+        )}
         {list.length ? list.map(s => (
           <div className={'item' + (editingId === s.id ? ' item-edit' : '')} key={s.id}>
             <div style={{ flex: 1 }}>
