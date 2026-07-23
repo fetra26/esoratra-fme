@@ -23,11 +23,10 @@ const BADGE_CSS = `
   .b-top{display:flex;justify-content:space-between;align-items:flex-start;gap:3mm}
   .b-brand{font-size:11pt;font-weight:800;color:#0a5e4d;line-height:1.1}
   .b-ev{display:block;font-size:7.5pt;font-weight:600;color:#8a948f;letter-spacing:.3px;margin-top:1px}
-  .b-logo{height:13mm;width:auto;flex:none;object-fit:contain}
+  .b-logo{height:13mm;width:auto;flex:none;object-fit:contain;border-radius:2mm}
   .b-cat{align-self:flex-start;background:#fff;font-weight:800;font-size:9pt;text-transform:uppercase;
     letter-spacing:.6px;padding:1.1mm 3.2mm;border:1.3pt solid;border-radius:99mm;margin-top:2mm}
-  .b-plabel{font-size:7.5pt;text-transform:uppercase;letter-spacing:1.2px;color:#9aa4a0;margin-top:3mm}
-  .b-name{font-size:18pt;font-weight:800;color:#15201c;line-height:1.05;margin-top:.5mm}
+  .b-name{font-size:18pt;font-weight:800;color:#15201c;line-height:1.05;margin-top:3.5mm}
   .b-rows{margin-top:3mm;display:flex;flex-direction:column;gap:2mm}
   .b-row{display:flex;align-items:baseline;gap:2.5mm;font-size:10.5pt}
   .b-row .k{flex:none;width:24mm;color:#5a6963;font-weight:700;text-transform:uppercase;
@@ -49,7 +48,7 @@ function renderAndPrint(cards) {
 const logoUrl = () => location.origin + '/logo-badge.png'
 const eventName = () => EVENT.nom.split('—')[0].trim()
 
-function badgeCard(color, catLabel, plabel, nom, rows, code) {
+function badgeCard(color, catLabel, nom, rows) {
   const rowsHtml = rows.map(([k, v]) =>
     `<div class="b-row"><span class="k">${esc(k)}</span><span class="v">${esc(v || '—')}</span></div>`).join('')
   return `<div class="badge" style="border-left:5mm solid ${color}">
@@ -59,10 +58,10 @@ function badgeCard(color, catLabel, plabel, nom, rows, code) {
         <img class="b-logo" src="${logoUrl()}" alt="">
       </div>
       <div class="b-cat" style="border-color:${color};color:${color}">${esc(catLabel)}</div>
-      <div class="b-plabel">${esc(plabel)}</div>
       <div class="b-name">${esc(nom)}</div>
       <div class="b-rows">${rowsHtml}</div>
-      <div class="b-foot"><span>${esc(EVENT.dates)} · ${esc(EVENT.lieu)}</span><span class="b-code">${esc(code)}</span></div>
+      <div class="b-foot"><span>${esc(EVENT.dates)} · ${esc(EVENT.lieu)}</span>
+        <!-- numéro de référence masqué sur le badge --></div>
     </div>
   </div>`
 }
@@ -70,9 +69,8 @@ function badgeCard(color, catLabel, plabel, nom, rows, code) {
 export function printBadges(membres, { egById = {}, distByEglise = {} } = {}) {
   if (!membres.length) return false
   const cards = membres.map(m => badgeCard(
-    CATCOLOR[m.categorie] || '#0e7c66', m.categorie, 'Participant', m.nom,
-    [['Distrika', distByEglise[m.eglise_id]], ['Fiangonana', egById[m.eglise_id]], ['K.P', m.kilasy]],
-    m.code || ''
+    CATCOLOR[m.categorie] || '#0e7c66', m.categorie, m.nom,
+    [['Distrika', distByEglise[m.eglise_id]], ['Fiangonana', egById[m.eglise_id]], ['K.P', m.kilasy]]
   )).join('')
   renderAndPrint(cards)
   return true
@@ -81,9 +79,8 @@ export function printBadges(membres, { egById = {}, distByEglise = {} } = {}) {
 export function printStaffBadges(staff) {
   if (!staff.length) return false
   const cards = staff.map(s => badgeCard(
-    CATCOLOR.Staff, 'Staff', 'Ekipan\'ny Lasy', s.nom,
-    [['Andraikitra', s.andraikitra], ['Finday', s.contact]],
-    'STAFF'
+    CATCOLOR.Staff, 'Staff', s.nom,
+    [['Andraikitra', s.andraikitra], ['Finday', s.contact]]
   )).join('')
   renderAndPrint(cards)
   return true
