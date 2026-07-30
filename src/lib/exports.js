@@ -41,13 +41,12 @@ export function exportParEglise(membres, eglises) {
   return buildAndSave(sheets, 'camporee_par_eglise.xlsx')
 }
 
-export function exportStaff(staff, districts) {
+export function exportStaff(staff) {
   if (!staff.length) return false
-  const dById = Object.fromEntries(districts.map(d => [d.id, d.nom]))
-  const rows = staff.map(s => [dById[s.district_id] || '', s.nom, s.andraikitra || '', s.contact || ''])
+  const rows = staff.map(s => [s.nom, s.totem || '', s.andraikitra || '', s.eglise || '', s.district || '', s.region || ''])
   return buildAndSave([{
     name: 'Staff',
-    headers: ['District', 'Nom & prénoms', "Andraikitra anatin'ny Lasy", "Laharan'ny Finday"],
+    headers: ['Nom & prénoms', 'Totem', 'Andraikitra @ lasy', 'Église', 'District', 'Région'],
     rows
   }], 'camporee_staff.xlsx')
 }

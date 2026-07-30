@@ -9,15 +9,23 @@ alter table profiles drop constraint if exists profiles_role_check;
 alter table profiles add constraint profiles_role_check
   check (role in ('admin', 'responsable', 'sekretera', 'en_attente'));
 
--- 2) Table staff
+-- 2) Table staff (champs : Anarana, Totem, Andraikitra @ lasy, Église, District, Région)
 create table if not exists staff (
   id uuid primary key default gen_random_uuid(),
-  district_id uuid references districts(id) on delete set null,
-  nom text not null,
+  nom text not null,       -- Anarana sy fanampin'anarana
+  totem text,              -- Totem
   andraikitra text,        -- Andraikitra anatin'ny Lasy
-  contact text,            -- Laharan'ny Finday
+  eglise text,             -- Église
+  district text,           -- District
+  region text,             -- Région
   created_at timestamptz default now()
 );
+
+-- au cas où la table existait déjà avec l'ancien schéma
+alter table staff add column if not exists totem text;
+alter table staff add column if not exists eglise text;
+alter table staff add column if not exists district text;
+alter table staff add column if not exists region text;
 
 alter table staff enable row level security;
 

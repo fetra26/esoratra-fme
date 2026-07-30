@@ -20,11 +20,8 @@ export default function ExportPage() {
     try {
       let ok
       if (mode === 'staff') {
-        const [staff, districts] = await Promise.all([
-          fetchAllRows('staff', '*', q => q.order('nom')),
-          fetchAllRows('districts', '*', q => q.order('nom'))
-        ])
-        ok = exportStaff(staff, districts)
+        const staff = await fetchAllRows('staff', '*', q => q.order('nom'))
+        ok = exportStaff(staff)
       } else {
         const { districts, eglises, membres } = await fetchAll()
         ok = mode === 'eglise'

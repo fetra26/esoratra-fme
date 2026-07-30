@@ -80,7 +80,7 @@ export function printStaffBadges(staff) {
   if (!staff.length) return false
   const cards = staff.map(s => badgeCard(
     CATCOLOR.Staff, 'Staff', s.nom,
-    [['Andraikitra', s.andraikitra], ['Finday', s.contact]]
+    [['Andraikitra', s.andraikitra], ['Distrika', s.district], ['Totem', s.totem]]
   )).join('')
   renderAndPrint(cards)
   return true

@@ -1,13 +1,11 @@
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../lib/supabase'
-import { useAuth } from '../../context/AuthContext'
 import { printStaffBadges } from '../../lib/badges'
 import Toast from '../../components/Toast'
 
-const empty = { nom: '', andraikitra: '', contact: '' }
+const empty = { nom: '', totem: '', andraikitra: '', eglise: '', district: '', region: '' }
 
 export default function Staff() {
-  const { districtId } = useAuth()
   const [list, setList] = useState([])
   const [form, setForm] = useState(empty)
   const [editingId, setEditingId] = useState(null)
@@ -25,22 +23,28 @@ export default function Staff() {
     if (!form.nom.trim()) return setToast("Saisissez l'anarana")
     const payload = {
       nom: form.nom.trim(),
+      totem: form.totem.trim() || null,
       andraikitra: form.andraikitra.trim() || null,
-      contact: form.contact.trim() || null
+      eglise: form.eglise.trim() || null,
+      district: form.district.trim() || null,
+      region: form.region.trim() || null
     }
     if (editingId) {
       const { error } = await supabase.from('staff').update(payload).eq('id', editingId)
       if (error) return setToast('Erreur: ' + error.message)
       setEditingId(null); setForm(empty); setToast('Staff modifié'); load()
     } else {
-      const { error } = await supabase.from('staff').insert({ ...payload, district_id: districtId })
+      const { error } = await supabase.from('staff').insert(payload)
       if (error) return setToast('Erreur: ' + error.message)
       setForm(empty); setToast(payload.nom + ' ajouté'); load()
     }
   }
   function startEdit(s) {
     setEditingId(s.id)
-    setForm({ nom: s.nom, andraikitra: s.andraikitra || '', contact: s.contact || '' })
+    setForm({
+      nom: s.nom, totem: s.totem || '', andraikitra: s.andraikitra || '',
+      eglise: s.eglise || '', district: s.district || '', region: s.region || ''
+    })
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
   function cancelEdit() { setEditingId(null); setForm(empty) }
@@ -61,11 +65,22 @@ export default function Staff() {
         <div className="field"><label>Anarana sy fanampin'anarana <span className="req">*</span></label>
           <input value={form.nom} onChange={e => set('nom', e.target.value)} placeholder="ANARANA Fanampin'anarana" />
         </div>
-        <div className="field"><label>Andraikitra anatin'ny Lasy</label>
+        <div className="field"><label>Totem</label>
+          <input value={form.totem} onChange={e => set('totem', e.target.value)} placeholder="Totem" />
+        </div>
+        <div className="field"><label>Andraikitra @ lasy</label>
           <input value={form.andraikitra} onChange={e => set('andraikitra', e.target.value)} placeholder="Ex : Sakafo, Fandriampahalemana, Fitsaboana…" />
         </div>
-        <div className="field"><label>Laharan'ny Finday</label>
-          <input type="tel" value={form.contact} onChange={e => set('contact', e.target.value)} placeholder="034 00 000 00" />
+        <div className="field"><label>Église</label>
+          <input value={form.eglise} onChange={e => set('eglise', e.target.value)} placeholder="Anaran'ny Fiangonana" />
+        </div>
+        <div className="row">
+          <div className="field"><label>District</label>
+            <input value={form.district} onChange={e => set('district', e.target.value)} placeholder="District" />
+          </div>
+          <div className="field"><label>Région</label>
+            <input value={form.region} onChange={e => set('region', e.target.value)} placeholder="Région" />
+          </div>
         </div>
         <div className="row" style={{ gap: 8 }}>
           <button className="btn btn-green" onClick={save} style={{ flex: 1 }}>
@@ -87,8 +102,8 @@ export default function Staff() {
         {list.length ? list.map(s => (
           <div className={'item' + (editingId === s.id ? ' item-edit' : '')} key={s.id}>
             <div style={{ flex: 1 }}>
-              <div className="nm">{s.nom}</div>
-              <div className="sb">{[s.andraikitra, s.contact && '📞 ' + s.contact].filter(Boolean).join(' · ') || '—'}</div>
+              <div className="nm">{s.nom}{s.totem ? ' · ' + s.totem : ''}</div>
+              <div className="sb">{[s.andraikitra, s.eglise, s.district, s.region].filter(Boolean).join(' · ') || '—'}</div>
             </div>
             <div className="rt">
               <button className="ic" title="Modifier" onClick={() => startEdit(s)}>✎</button>
