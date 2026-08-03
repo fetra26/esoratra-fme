@@ -38,3 +38,10 @@ drop policy if exists staff_write on staff;
 create policy staff_write on staff for all to authenticated
   using (is_admin() or exists (select 1 from profiles where id = auth.uid() and role = 'sekretera'))
   with check (is_admin() or exists (select 1 from profiles where id = auth.uid() and role = 'sekretera'));
+
+-- 4) Le sekretera peut LIRE les églises (pour la liste déroulante du formulaire staff)
+--    (districts est déjà lisible par tout compte connecté)
+drop policy if exists eglises_select on eglises;
+create policy eglises_select on eglises for select to authenticated
+  using (is_admin() or district_id = my_district()
+    or exists (select 1 from profiles where id = auth.uid() and role = 'sekretera'));

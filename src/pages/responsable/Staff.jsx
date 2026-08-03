@@ -1,21 +1,34 @@
 import { useEffect, useState, useCallback } from 'react'
-import { supabase } from '../../lib/supabase'
+import { supabase, fetchAllRows } from '../../lib/supabase'
 import { printStaffBadges } from '../../lib/badges'
 import Toast from '../../components/Toast'
 
 const empty = { nom: '', totem: '', andraikitra: '', eglise: '', district: '', region: '' }
+const uniqSorted = (arr) => [...new Set(arr.map(x => (x || '').trim()).filter(Boolean))]
+  .sort((a, b) => a.localeCompare(b, 'fr', { numeric: true }))
 
 export default function Staff() {
   const [list, setList] = useState([])
+  const [districts, setDistricts] = useState([])
+  const [eglises, setEglises] = useState([])
   const [form, setForm] = useState(empty)
   const [editingId, setEditingId] = useState(null)
   const [toast, setToast] = useState('')
 
   const load = useCallback(async () => {
-    const { data } = await supabase.from('staff').select('*').order('created_at')
-    setList(data || [])
+    const [{ data: s }, d, e] = await Promise.all([
+      supabase.from('staff').select('*').order('created_at'),
+      fetchAllRows('districts', '*', q => q.order('nom')),
+      fetchAllRows('eglises', '*', q => q.order('nom'))
+    ])
+    setList(s || []); setDistricts(d); setEglises(e)
   }, [])
   useEffect(() => { load() }, [load])
+
+  // Options des listes déroulantes : base + valeurs déjà saisies dans le staff
+  const districtOpts = uniqSorted([...districts.map(d => d.nom), ...list.map(s => s.district)])
+  const egliseOpts = uniqSorted([...eglises.map(e => e.nom), ...list.map(s => s.eglise)])
+  const regionOpts = uniqSorted(list.map(s => s.region))
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
@@ -72,14 +85,17 @@ export default function Staff() {
           <input value={form.andraikitra} onChange={e => set('andraikitra', e.target.value)} placeholder="Ex : Sakafo, Fandriampahalemana, Fitsaboana…" />
         </div>
         <div className="field"><label>Église</label>
-          <input value={form.eglise} onChange={e => set('eglise', e.target.value)} placeholder="Anaran'ny Fiangonana" />
+          <input value={form.eglise} list="dl-eglise" onChange={e => set('eglise', e.target.value)} placeholder="Choisir ou saisir…" />
+          <datalist id="dl-eglise">{egliseOpts.map(o => <option key={o} value={o} />)}</datalist>
         </div>
         <div className="row">
           <div className="field"><label>District</label>
-            <input value={form.district} onChange={e => set('district', e.target.value)} placeholder="District" />
+            <input value={form.district} list="dl-district" onChange={e => set('district', e.target.value)} placeholder="Choisir ou saisir…" />
+            <datalist id="dl-district">{districtOpts.map(o => <option key={o} value={o} />)}</datalist>
           </div>
           <div className="field"><label>Région</label>
-            <input value={form.region} onChange={e => set('region', e.target.value)} placeholder="Région" />
+            <input value={form.region} list="dl-region" onChange={e => set('region', e.target.value)} placeholder="Choisir ou saisir…" />
+            <datalist id="dl-region">{regionOpts.map(o => <option key={o} value={o} />)}</datalist>
           </div>
         </div>
         <div className="row" style={{ gap: 8 }}>
